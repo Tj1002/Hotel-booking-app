@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 const hotelSchema = new mongoose.Schema(
   {
     userId: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.ObjectId,
+      ref:"User",
+      required:true,
     },
     name: {
       type: String,
