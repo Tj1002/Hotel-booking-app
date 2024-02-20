@@ -18,8 +18,11 @@ app.use(cookieParser())
 import userRouter from "./routes/user.routes.js"
 import myHotelRouter from "./routes/my-hotel.routes.js"
 import hotelRouter from "./routes/hotel.routes.js"
+import bookingRouter from "./routes/booking.routes.js"
+
 app.use('/api/v1/users',userRouter)
 app.use('/api/v1/my-hotels',myHotelRouter)
 app.use('/api/v1/hotels',hotelRouter)
+app.use('/api/v1/bookings',bookingRouter)
 
 export default app
