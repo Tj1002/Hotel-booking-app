@@ -76,4 +76,18 @@ const getAllHotels=asyncHandler(async(req,res)=>{
      .status(201)
      .json(new ApiResponse(200, hotels, "fetching all hotels Successfully"));
 })
-export {registerHotel,getAllHotels}
+const getSingleHotel=asyncHandler(async(req,res)=>{
+  const userId = req.user._id;
+  if (!userId) {
+    throw new ApiError(400, "You are not authroized to view this");
+  }
+
+  const hotel = await Hotel.findById({ _id:req.params.id });
+  if (!hotel) {
+    throw new ApiError(400, "No hotels found");
+  }
+  return res
+    .status(201)
+    .json(new ApiResponse(200, hotel, "fetching hotel Successfully"));
+})
+export {registerHotel,getAllHotels,getSingleHotel}
