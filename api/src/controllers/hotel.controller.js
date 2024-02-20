@@ -22,7 +22,17 @@ const getAllHotels = asyncHandler(async(req,res)=>{
   return res
     .status(201)
     .json(new ApiResponse(200,{response} ,"getting all hotels"));
-
-
 })
-export {getAllHotels}
+const getHotel = asyncHandler(async(req,res)=>{
+  const id = req.params.id;
+  const hotel = await Hotel.findById({
+    _id:id
+  })
+  if(!hotel){
+    throw new ApiError(400, "No hotel matches with thi id");
+  }
+  return res
+    .status(201)
+    .json(new ApiResponse(200, { hotel }, "getting particular hotel"));
+})
+export {getAllHotels,getHotel}
