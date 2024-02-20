@@ -2,7 +2,9 @@ import { asyncHandler } from "../utils/asynchandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Hotel } from "../models/hotel.model.js";
-const getAllHotels = asyncHandler(async(req,res)=>{
+
+
+const searchHotels = asyncHandler(async(req,res)=>{
   
   const pageSize=5;
   const pageNumber= parseInt(req.query.page ? req.query.page.toString() : "1")
@@ -22,17 +24,28 @@ const getAllHotels = asyncHandler(async(req,res)=>{
     .status(201)
     .json(new ApiResponse(200,{response} ,"getting all hotels"));
 })
+
+const getAllHotels=asyncHandler(async(req,res)=>{
+  const hotels= await Hotel.find().sort("-lastUpdated")
+  if (!hotels) {
+    throw new ApiError(400, "No hotels found");
+  }
+   return res
+     .status(201)
+     .json(new ApiResponse(200, hotels, "getting particular hotel"));
+})
+
 const getHotel = asyncHandler(async(req,res)=>{
   const id = req.params.id;
   const hotel = await Hotel.findById({
     _id:id
   })
   if(!hotel){
-    throw new ApiError(400, "No hotel matches with thi id");
+    throw new ApiError(400, "No hotel matches with this id");
   }
   return res
     .status(201)
     .json(new ApiResponse(200, { hotel }, "getting particular hotel"));
 })
 
-export {getAllHotels,getHotel,}
+export {getAllHotels,getHotel,searchHotels}
