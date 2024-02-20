@@ -8,7 +8,6 @@ const registerHotel = asyncHandler(async (req, res) => {
   if(!userId){
     throw new ApiError(400, "All fields are required");
   }
-
   const {
     name,
     city,
@@ -56,8 +55,6 @@ const registerHotel = asyncHandler(async (req, res) => {
     lastUpdated:new Date()
   });
 
-  
-
   if (!hotel) {
     throw new ApiError(500, "Something went wrong while registering the hotel");
   }
@@ -66,4 +63,17 @@ const registerHotel = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(200, hotel, "Hotel registered Successfully"));
 });
-export {registerHotel}
+const getAllHotels=asyncHandler(async(req,res)=>{
+  const userId = req.user._id
+  if(!userId){
+    throw new ApiError(400, "You are not authroized to view this");
+  }
+  const hotels = await Hotel.find({userId})
+  if(!hotels){
+    throw new ApiError(400, "No hotels found");
+  }
+   return res
+     .status(201)
+     .json(new ApiResponse(200, hotels, "fetching all hotels Successfully"));
+})
+export {registerHotel,getAllHotels}
