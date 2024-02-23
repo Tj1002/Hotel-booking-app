@@ -49,6 +49,8 @@ const hotelSchema = new mongoose.Schema(
       {
         type: String,
         required: true,
+        min:1,
+        max:6
       },
     ],
     lastUpdated: {

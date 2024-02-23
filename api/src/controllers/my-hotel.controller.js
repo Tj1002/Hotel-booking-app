@@ -8,36 +8,53 @@ const registerHotel = asyncHandler(async (req, res) => {
   if(!userId){
     throw new ApiError(400, "All fields are required");
   }
-  const {
-    name,
-    city,
-    country,
-    description,
-    type,
-    adultCount,
-    childCount,
-    facilities,
-    pricePerNight,
-    starRating,
-  } = req.body;
+ const {
+   name,
+   city,
+   country,
+   description,
+   type,
+   adultCount,
+   childCount,
+   facilities,
+   pricePerNight,
+   starRating,
+ } = req.body;
+ if(facilities.length==0){
+  throw new ApiError(400,"Atleast enter one facility")
+ }
+
+ if (
+   [
+     name,
+     city,
+     country,
+     description,
+     type,
+     adultCount,
+     childCount,
+     pricePerNight,
+     starRating,
+   ].some((field) => (field || "").trim() === "")
+ ) {
+   throw new ApiError(400, "All fields are required");
+ }
+
   
-  if (
-    [name,city,country,description,type,adultCount,childCount,facilities,pricePerNight,starRating].some((field) => field?.trim() === "")
-  ) {
-    throw new ApiError(400, "All fields are required");
+  const avatarfiles = req.files;
+  console.log("files", avatarfiles);
+  if (!avatarfiles) {
+    throw Error;
   }
-  const files = req.files
-  console.log("files",files);
-  const imageUrlLocalPath=files && files.map(file=>file.path)
-  console.log("imageurllocalpath", imageUrlLocalPath);
-  if(!imageUrlLocalPath){
-    throw new ApiError(400, "imageUrlLocalPath not found");
+  const localFilePaths = avatarfiles && avatarfiles.map((file) => file.path);
+  console.log("localFilePaths", localFilePaths);
+  if (!localFilePaths) {
+    throw Error;
   }
-  const imageUrls = await uploadOnCloudinary(imageUrlLocalPath);
+  const imageUrl = await uploadOnCloudinary(localFilePaths);
+  console.log("imageurl", imageUrl);
   
-  if (!imageUrls) {
-    throw new ApiError(400, "image file is required");
-  }
+  
 
   const hotel = await Hotel.create({
     userId,
@@ -51,7 +68,7 @@ const registerHotel = asyncHandler(async (req, res) => {
     facilities,
     pricePerNight,
     starRating,
-    imageUrls:imageUrls && imageUrls.map(imageUrl=>imageUrl.url),
+    imageUrls:imageUrl && imageUrl.map(imUrl=>imUrl.url),
     lastUpdated:new Date()
   });
 
@@ -84,7 +101,7 @@ const getSingleHotel=asyncHandler(async(req,res)=>{
 
   const hotel = await Hotel.findById({ _id:req.params.id });
   if (!hotel) {
-    throw new ApiError(400, "No hotels found");
+    throw new ApiError(400, "No hotels found")
   }
   return res
     .status(201)
@@ -120,7 +137,7 @@ const updateHotel=asyncHandler(async(req,res)=>{
       facilities,
       pricePerNight,
       starRating,
-    ].some((field) => field?.trim() === "")
+    ].some((field) => (field || "").trim() === "")
   ) {
     throw new ApiError(400, "All fields are required");
   }
