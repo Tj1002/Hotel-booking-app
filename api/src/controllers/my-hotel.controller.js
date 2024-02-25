@@ -82,6 +82,15 @@ const registerHotel = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, hotel, "Hotel registered Successfully"));
 });
 const getAllHotels = asyncHandler(async (req, res) => {
+  const hotels = await Hotel.find().sort({ last_updated: 1 });
+  if (!hotels) {
+    throw new ApiError(400, "No hotels found");
+  }
+  return res
+    .status(201)
+    .json(new ApiResponse(200, hotels, "fetching all hotels Successfully"));
+});
+const getAllHotelsByUser = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   if (!userId) {
     throw new ApiError(400, "You are not authroized to view this");
@@ -95,10 +104,6 @@ const getAllHotels = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, hotels, "fetching all hotels Successfully"));
 });
 const getSingleHotel = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  if (!userId) {
-    throw new ApiError(400, "You are not authroized to view this");
-  }
 
   const hotel = await Hotel.findById({ _id: req.params.id });
   if (!hotel) {
@@ -150,7 +155,7 @@ const updateHotel = asyncHandler(async (req, res) => {
   console.log("imageurllocalpath", imageUrlLocalPath);
   const updatedImageUrls = await uploadOnCloudinary(imageUrlLocalPath);
 
-  const allImageUrls = [...updatedImageUrls, ...(req.body.imageUrls || 0)];
+  const allImageUrls = [...updatedImageUrls];
   if (allImageUrls.length > 6) {
     throw new ApiError(400, "maximum 6 images are allowed");
   }
@@ -200,6 +205,7 @@ const deleteHotel = asyncHandler(async (req, res) => {
 export {
   registerHotel,
   getAllHotels,
+  getAllHotelsByUser,
   getSingleHotel,
   updateHotel,
   deleteHotel,
