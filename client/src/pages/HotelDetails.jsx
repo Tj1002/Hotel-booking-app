@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+
 import { useParams } from "react-router-dom";
 import { AiFillStar } from "react-icons/ai";
 
 function HotelDetails() {
-  const { currentUser } = useSelector((state) => state.user);
+  
   const [hotelDetails, setHotelDetails] = useState([]);
   const { hotelId } = useParams();
   useEffect(() => {
@@ -15,22 +15,19 @@ function HotelDetails() {
         );
         const result = await response.json();
         const hotel = result.data;
-        console.log(hotel);
         setHotelDetails(hotel);
       } catch (error) {
         console.log(error);
       }
     };
-    if (currentUser) {
-      getSingleHotel();
-    }
-  }, [currentUser]);
-  hotelDetails && console.log(hotelDetails);
+    getSingleHotel();
+  },[])
+ 
   return (
     <div className="mx-8 my-4">
       <div className="container mx-auto mb-2">
         <span className="flex gap-2">
-          {Array.from({ length: hotelDetails.starRating }).map((_,index) => (
+          {Array.from({ length: hotelDetails.starRating }).map((_, index) => (
             <AiFillStar className="fill-yellow-400" key={index} />
           ))}
         </span>
@@ -38,7 +35,7 @@ function HotelDetails() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {console.log(hotelDetails.imageUrls)}
+        
         {hotelDetails &&
           hotelDetails.imageUrls &&
           hotelDetails.imageUrls.map((image) => (
@@ -67,12 +64,12 @@ function HotelDetails() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr]">
         <div className="whitespace-pre-line">{hotelDetails.description}</div>
-        {/* <div className="h-fit">
-          <GuestInfoForm
+        <div className="h-fit">
+          {/* <GuestInfoForm
             pricePerNight={hotel.pricePerNight}
             hotelId={hotel._id}
-          />
-        </div> */}
+          /> */}
+        </div>
       </div>
     </div>
   );

@@ -47,7 +47,7 @@ function Header() {
           {currentUser ? (
             <div className="flex flex-row gap-2 ">
               <div className=" flex flex-nowrap mx-auto py-6">
-                <Link to="/sign-in">
+                <Link to="/">
                   <span className="text-[#0c3b2e] px-2 rounded bg-white text-sm font-bold md:text-xl hover:bg-[#0c3b2e] hover:text-white">
                     My bookings
                   </span>

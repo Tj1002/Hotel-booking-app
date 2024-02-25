@@ -1,38 +1,36 @@
-
 import { Link } from "react-router-dom";
 import { BsBuilding, BsMap } from "react-icons/bs";
 import { BiHotel, BiMoney, BiStar } from "react-icons/bi";
 import { useEffect, useState } from "react";
-import {useSelector} from "react-redux"
+import { useSelector } from "react-redux";
 
 const MyHotels = () => {
-  const [hotelsData,setHotelsData]=useState([])
-  const {currentUser}=useSelector(state=>state.user)
-  // console.log(currentUser);
+  const [hotelsData, setHotelsData] = useState([]);
+  const { currentUser } = useSelector((state) => state.user);
+  
 
-  useEffect(()=>{
-    const getAllHotels = async ()=>{
+  useEffect(() => {
+    const getAllHotels = async () => {
       try {
-        const res =await fetch('/api/v1/my-hotels/getAllHotels')
-        const results = await res.json()
-        const hotelData= results.data
+        const res = await fetch("/api/v1/my-hotels/getAllHotelsByUser");
+        const results = await res.json();
+        const hotelData = results.data;
         console.log(hotelData);
-        if(res.ok){
+        if (res.ok) {
           console.log(hotelData[1].imageUrls[0]);
-          setHotelsData(hotelData)
+          setHotelsData(hotelData);
         }
       } catch (error) {
         console.log("error occoured");
       }
+    };
+    if (currentUser) {
+      getAllHotels();
     }
-    if(currentUser){
-      getAllHotels()
-    }
-
-  },[currentUser])
+  }, [currentUser]);
 
   return (
-    <div className="container mx-auto my-5">
+    <div className="mx-10 my-5">
       <span className="flex justify-between my-2">
         <h1 className="text-3xl font-bold">My Hotels</h1>
         <Link
@@ -42,7 +40,7 @@ const MyHotels = () => {
           Add Hotel
         </Link>
       </span>
-      <div className="grid grid-cols-1 gap-8">
+      <div className="grid grid-cols-1 gap-8 mx-2">
         {hotelsData.map((hotel) => (
           <div
             className="flex flex-col justify-between border border-slate-300 rounded-lg p-8 gap-5"
@@ -73,14 +71,6 @@ const MyHotels = () => {
             </div>
             <div className="flex justify-end flex-row gap-2">
               <span>
-                <Link
-                  to={`/view-hotel/${hotel._id}`}
-                  className="flex bg-[#0c3b2e] text-white text-xl font-bold p-2 hover:bg-[#4ba78d] hover:text-[#0c3b2e]"
-                >
-                  View Details
-                </Link>
-              </span>
-              <span >
                 <Link
                   to={`/edit-hotel/${hotel._id}`}
                   className="flex bg-[#0c3b2e] text-white text-xl font-bold p-2 hover:bg-[#4ba78d] hover:text-[#0c3b2e]"

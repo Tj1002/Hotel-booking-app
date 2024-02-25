@@ -8,7 +8,7 @@ function HotelDetails() {
   useEffect(() => {
     const getAllHotel = async () => {
       try {
-        const response = await fetch(`/api/v1/my-hotels/getAllHotels`);
+        const response = await fetch(`/api/v1/hotels`);
         const result = await response.json();
         const hotel = result.data;
         console.log(hotel);

@@ -1,13 +1,12 @@
 import { useForm } from "react-hook-form";
-import DatePicker from "react-datepicker";
-import { useSearchContext } from "../../contexts/SearchContext";
-import { useAppContext } from "../../contexts/AppContext";
+import { Datepicker } from "flowbite-react";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 
 const GuestInfoForm = () => {
-  // const search = useSearchContext();
+
   const { isLoggedIn } = useAppContext();
   const {currentUser}=useSelector(state=>state.user)
   const navigate = useNavigate();
@@ -20,16 +19,16 @@ const GuestInfoForm = () => {
     setValue,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      checkIn: search.checkIn,
-      checkOut: search.checkOut,
-      adultCount: search.adultCount,
-      childCount: search.childCount,
-    },
+    // defaultValues: {
+    //   checkIn: search.checkIn,
+    //   checkOut: search.checkOut,
+    //   adultCount: search.adultCount,
+    //   childCount: search.childCount,
+    // },
   });
 
-  const checkIn = watch("checkIn");
-  const checkOut = watch("checkOut");
+  // const checkIn = watch("checkIn");
+  // const checkOut = watch("checkOut");
 
   const minDate = new Date();
   const maxDate = new Date();
@@ -46,7 +45,7 @@ const GuestInfoForm = () => {
     navigate("/sign-in", { state: { from: location } });
   };
 
-  const onSubmit = (data: GuestInfoFormData) => {
+  const onSubmit = (data) => {
     search.saveSearchValues(
       "",
       data.checkIn,
