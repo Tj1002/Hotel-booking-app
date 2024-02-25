@@ -17,6 +17,7 @@ function HotelLocation() {
             <TextInput
               id="city"
               type="text"
+            
               className="border rounded w-full py-1 px-2 font-normal"
               {...register("city", { required: "This field is required" })}
             />
@@ -30,6 +31,7 @@ function HotelLocation() {
               <TextInput
                 type="text"
                 id="country"
+                
                 className="border rounded w-full py-1 px-2 font-normal"
                 {...register("country", {
                   required: "This field is required",

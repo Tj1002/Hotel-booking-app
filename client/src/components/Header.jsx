@@ -54,7 +54,7 @@ function Header() {
                 </Link>
               </div>
               <div className=" mx-auto py-6">
-                <Link to="/my-hotels" >
+                <Link to="/my-hotels/" >
                   <span className={`text-[#0c3b2e] px-2 rounded bg-white text-sm font-bold md:text-xl hover:bg-[#0c3b2e] hover:text-white`}>
                     My hotels
                   </span>

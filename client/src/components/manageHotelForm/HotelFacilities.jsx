@@ -8,6 +8,7 @@ function HotelFacilities() {
     register,
     formState: { errors },
   } = useFormContext();
+ 
 
   return (
            <div>
@@ -23,6 +24,7 @@ function HotelFacilities() {
                 <TextInput
                   type="checkbox"
                   value={facility}
+                  
                   {...register("facilities", {
                     validate: (facilities) => {
                       if (facilities && facilities.length > 0) {

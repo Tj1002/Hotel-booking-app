@@ -1,4 +1,4 @@
-import { Button, FileInput} from "flowbite-react";
+import { Button, FileInput } from "flowbite-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -13,14 +13,17 @@ import HotelFacilities from "./HotelFacilities";
 import HotelGuest from "./HotelGuest";
 import ImagesSection from "./HotelImages";
 import ButtonForm from "../Button/Button";
+import { useEffect } from "react";
 
-function ManageHotelForm() {
-  const navigate=useNavigate()
+function ManageHotelForm({ hotel }) {
+  const navigate = useNavigate();
   const methods = useForm();
-  const {handleSubmit} = methods;
-
+  const { handleSubmit, reset } = methods;
+  useEffect(() => {
+    reset(hotel);
+  }, [hotel, reset]);
+console.log(hotel?._id);
   const onSubmit = handleSubmit(async (data) => {
- 
     const FileList = Array.from(data.imageFiles);
     const formData = new FormData();
     formData.append("name", data.name);
@@ -38,38 +41,42 @@ function ManageHotelForm() {
     FileList.forEach((file) => {
       formData.append("imageFiles", file);
     });
-    try {
-      const response = await fetch("/api/v1/my-hotels/register", {
-        method: "POST",
-        body: formData
-      });
-      const result = await response.json();
-
-      if (result.success === false) {
-        console.log(result.error);
-        toast.error("Invalid credentials");
-        return
-      }
-      
-      if (response.ok) {
-        toast.success("Hotel created successfully");
-        console.log(result);
-        navigate("/");
-      }
-    } 
-    catch (error) {
-      toast.error("Hotel creation failure");
-    }
    
+  try {
+    let url = "/api/v1/my-hotels/register";
+    let method = "POST";
+
+    if (hotel) {
+      url = `/api/v1/my-hotels/updateHotel/${hotel._id}`; 
+      method = "PUT";
+    }
+
+    const response = await fetch(url, {
+      method: method,
+      body: formData,
+    });
+
+    if (response.ok) {
+      const message = hotel
+        ? "Hotel updated successfully"
+        : "Hotel created successfully";
+      toast.success(message);
+      navigate("/");
+    } else {
+      const errorData = await response.json();
+      toast.error(errorData.error);
+    }
+  } catch (error) {
+    toast.error("Error updating hotel");
+  }
   });
   return (
     <FormProvider {...methods}>
-      <div className="flex flex-col gap-4 my-4 items-center justify-center">
-        <h1 className="text-3xl text-gray-700   font-bold mb-3">Add Hotel</h1>
-        <form
-          onSubmit={onSubmit}
-          className="flex flex-col w-2/3 md:w-1/3  gap-4"
-        >
+      <div className="flex flex-col gap-4 my-4 mx-6 lg:mx-28 items-center justify-center ">
+        <h1 className="text-3xl text-gray-700   font-bold mb-3">
+          {hotel ? "Update Hotel" : "Add Hotel"}
+        </h1>
+        <form onSubmit={onSubmit} className="flex flex-col  gap-10">
           <HotelName />
           <HotelLocation />
           <HotelDescription />
@@ -79,8 +86,7 @@ function ManageHotelForm() {
           <HotelFacilities />
           <HotelGuest />
           <ImagesSection />
-          <ButtonForm message="Add Hotel" key={Date.now()}/>
-         
+          <ButtonForm message={hotel ? "Update Hotel" : "Add Hotel"} />
         </form>
       </div>
     </FormProvider>

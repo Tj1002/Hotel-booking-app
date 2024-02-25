@@ -16,6 +16,7 @@ function HotelType() {
       <div className="grid grid-cols-3 sm:grid-cols-3 gap-2 text-center align-middle">
         {hotelTypes.map((type) => (
           <Label
+
             key={type}
             className={
               typeWatch === type

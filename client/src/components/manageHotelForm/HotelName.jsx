@@ -12,6 +12,7 @@ function HotelName() {
           <TextInput
             type="text"
             id="name"
+            
             className="border rounded w-full py-1 px-2 font-normal"
             placeholder="Enter Hotel Name"
             {...register("name", {
