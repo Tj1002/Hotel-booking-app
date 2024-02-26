@@ -13,6 +13,8 @@ import AddHotels from "./pages/AddHotels";
 
 import EditHotel from "./pages/EditHotel";
 import HotelDetails from "./pages/HotelDetails";
+import Search from "./pages/Search";
+import Booking from "./pages/Booking";
 
 function App() {
   const { currentUser } = useSelector((state) => state.user);
@@ -25,18 +27,16 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/sign-in" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            
-            <Route path="/my-hotels" element={currentUser && <MyHotels />} />
+            <Route path="/my-hotels" element={<MyHotels />} />
             {currentUser && (
-              <Route
-                path="/add-hotels"
-                element={currentUser && <AddHotels />}
-              />
+              <>
+                <Route path="/add-hotels" element={<AddHotels />} />
+                <Route path="/hotel/:hotelId/booking" element={<Booking />} />
+                <Route path="/edit-hotel/:hotelId" element={<EditHotel />} />
+              </>
             )}
-            {currentUser && (
-              <Route path="/edit-hotel/:hotelId" element={<EditHotel />} />
-            )}
-            <Route path="/view-hotel/:hotelId" element={<HotelDetails />} />
+            <Route path="/detail/:hotelId" element={<HotelDetails />} />
+            <Route path="/search" element={<Search />} />
 
             <Route path="/my-bookings" element={<MyBookings />} />
           </Routes>

@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { Hotel } from "../models/hotel.model.js";
 import { constructSearchQuery } from "../utils/constructSearchQuery.js";
 
-router.get("/search", async (req, res) => {
+const searchHotels = asyncHandler(async (req, res) => {
   try {
     const query = constructSearchQuery(req.query);
 
@@ -51,13 +51,13 @@ router.get("/search", async (req, res) => {
 });
 
 const getAllHotels = asyncHandler(async (req, res) => {
-  const hotels = await Hotel.find().sort("-lastUpdated");
-  if (!hotels) {
-    throw new ApiError(400, "No hotels found");
+  try {
+    const hotels = await Hotel.find().sort("-lastUpdated");
+    res.json(hotels);
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Error fetching hotels" });
   }
-  return res
-    .status(201)
-    .json(new ApiResponse(200, hotels, "getting particular hotel"));
 });
 
 const getHotel = asyncHandler(async (req, res) => {

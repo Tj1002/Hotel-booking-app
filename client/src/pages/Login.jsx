@@ -8,7 +8,7 @@ import { signInSuccess } from "../redux/features/userSlice";
 
 function Login() {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const {
@@ -29,23 +29,22 @@ function Login() {
       });
       const result = await response.json();
 
-      if (result.success === false) {
-        console.log(result.error);
-        toast.error("Invalid credentials");
-        return setError(result.message);
+      if (!response.ok) {
+        console.log(result.data);
+        toast.error(result.data);
+        setLoading(false);
+        return setError(result.data);
       }
-      setLoading(false);
       if (response.ok) {
         toast.success("Login successful");
         console.log(result.data.user);
-        dispatch(signInSuccess(result.data.user))
+        dispatch(signInSuccess(result.data.user));
         navigate("/");
       }
     } catch (error) {
       setError(error.message);
       setLoading(false);
       toast.error("Login failure");
-
     }
   });
   return (
@@ -108,9 +107,7 @@ function Login() {
           </button>
         </form>
 
-        {error && (
-          <div className="text-red-500 text-sm mt-2">{error}</div>
-        )}
+        {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
         <div className="flex gap-2 text-sm mt-5">
           <span> Don't have an account?</span>
           <Link to="/register" className="text-blue-500">

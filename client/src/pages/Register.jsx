@@ -1,20 +1,20 @@
 import { Button, Label, Spinner, TextInput } from "flowbite-react";
 import toast from "react-hot-toast";
-import { Link ,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 
 function Register() {
-  const navigate=useNavigate()
-  const[loading,setLoading]=useState(false)
-  const[error,setError]=useState(null)
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const {
     register,
     watch,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit =  handleSubmit(async(data) => {
+  const onSubmit = handleSubmit(async (data) => {
     console.log(data);
     try {
       setLoading(true);
@@ -26,10 +26,11 @@ function Register() {
         body: JSON.stringify(data),
       });
       const result = await response.json();
-
-      if (result.success === false) {
-        console.log(result.error);
-        toast.error(data.message);
+      console.log(result);
+      if (!response.ok) {
+        console.log(result.message);
+        toast.error(result.message);
+        setLoading(false);
         return setError(result.message);
       }
       setLoading(false);
@@ -37,6 +38,8 @@ function Register() {
         toast.success("signup successful");
         navigate("/sign-in");
       }
+
+      navigate("/sign-in");
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -147,16 +150,18 @@ function Register() {
             type="submit"
             disabled={loading}
           >
-             {loading ? (
+            {loading ? (
               <>
                 <Spinner size="sm" />
                 <span className="pl-3">Loading...</span>
               </>
             ) : (
               "Register"
-            )} 
+            )}
           </button>
         </form>
+        {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+        <div className="flex gap-2 text-sm mt-5"></div>
         <div className="flex gap-2 text-sm mt-5">
           <span>Have an account?</span>
           <Link to="/sign-in" className="text-blue-500">

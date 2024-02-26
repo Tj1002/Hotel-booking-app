@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 
 const LatestDestinationCard = ({ hotel }) => {
+  console.log(hotel);
   return (
     <Link
-      to={`/view-hotel/${hotel._id}`}
+      to={`/detail/${hotel._id}`}
       className="relative cursor-pointer overflow-hidden rounded-md"
     >
       <div className="h-[300px]">

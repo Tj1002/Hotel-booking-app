@@ -1,15 +1,12 @@
-import React from 'react'
-import ManageHotelForm from '../components/manageHotelForm/ManageHotelForm';
-
+import React from "react";
+import ManageHotelForm from "../components/manageHotelForm/ManageHotelForm";
 
 function AddHotels() {
   return (
     <div>
-      
-     <ManageHotelForm/>
-     
+      <ManageHotelForm />
     </div>
   );
 }
 
-export default AddHotels
+export default AddHotels;

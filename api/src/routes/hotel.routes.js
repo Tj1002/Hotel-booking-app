@@ -1,6 +1,9 @@
 import express from "express";
-import {getAllHotels, getHotel, searchHotels} from "../controllers/hotel.controller.js";
-
+import {
+  getAllHotels,
+  getHotel,
+  searchHotels,
+} from "../controllers/hotel.controller.js";
 
 const router = express.Router();
 

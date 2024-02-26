@@ -20,7 +20,7 @@ const payment = asyncHandler(async (req, res) => {
   const totalCost = numberOfNights * hotel.pricePerNight;
   const paymentIntent = await stripe.paymentIntents.create({
     amount: totalCost,
-    currency: "inr",
+    currency: "usd",
     metadata: {
       hotelId,
       userId: req.user._id,
@@ -31,85 +31,89 @@ const payment = asyncHandler(async (req, res) => {
   }
   const response = {
     paymentIntentId: paymentIntent.id,
-    clientSecret: payment.client_secret.toString(),
+    clientSecret: paymentIntent.client_secret.toString(),
     totalCost,
   };
+  console.log(response);
   return res
     .status(201)
-    .json(new ApiResponse(200,  response , "payment successful"));
+    .json(new ApiResponse(200, response, "payment successful"));
 });
 
-const booking =asyncHandler(async(req,res)=>{
+const booking = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) {
     throw new ApiError(400, "All fields are required");
   }
   const paymentIntentId = req.body.paymentIntentId;
+  console.log("payementId", paymentIntentId);
 
-  const paymentIntent = await stripe.paymentIntents.retrieve(
-    paymentIntentId
-  );
-
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  console.log("payementIntent", paymentIntent);
   if (!paymentIntent) {
-     throw new ApiError(400, "payment intent not found");
+    throw new ApiError(400, "payment intent not found");
   }
 
   if (
     paymentIntent.metadata.hotelId !== req.params.hotelId ||
     paymentIntent.metadata.userId !== req.userId
   ) {
-     throw new ApiError(400, "payment intent mismatch");
+    throw new ApiError(400, "payment intent mismatch");
   }
 
   if (paymentIntent.status !== "succeeded") {
-     throw new ApiError(400, `payment intent not succeeded. Status: ${paymentIntent.status}`);
+    throw new ApiError(
+      400,
+      `payment intent not succeeded. Status: ${paymentIntent.status}`
+    );
   }
 
-  const newBooking= {
+  const newBooking = {
     ...req.body,
     userId: req.userId,
   };
+  console.log(newBooking);
 
   const hotel = await Hotel.findOneAndUpdate(
-    { 
-      _id: req.params.hotelId
-     },
+    {
+      _id: req.params.hotelId,
+    },
     {
       $push: { bookings: newBooking },
     }
   );
 
   if (!hotel) {
-         throw new ApiError(400, "hotel not found");
+    throw new ApiError(400, "hotel not found");
   }
   await hotel.save();
   return res
     .status(201)
-    .json(new ApiResponse(200, hotel , "payment successful"));
-})
+    .json(new ApiResponse(200, hotel, "payment successful"));
+});
 
-const getBookings = asyncHandler(async(req,res)=>{
+const getBookings = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) {
     throw new ApiError(400, "All fields are required");
   }
-  const hotels= await Hotel.find({
-    bookings:{
-      $eleMatch:{
-        userId
-    }}
-  })
-  const result = hotels.map(hotel=>{
-    const userBookings= hotel.bookings.filter(booking=>booking.userId===req.userId)
-    const hotelWithUserBookings={
+  const hotels = await Hotel.find({
+    bookings: {
+      $eleMatch: {
+        userId,
+      },
+    },
+  });
+  const result = hotels.map((hotel) => {
+    const userBookings = hotel.bookings.filter(
+      (booking) => booking.userId === req.userId
+    );
+    const hotelWithUserBookings = {
       ...hotel.toObject(),
-      bookings:userBookings
-    }
-    return hotelWithUserBookings
-  })
-  return res
-    .status(201)
-    .json(new ApiResponse(200, result, "hotel bookings"));
-
-})
-export { booking, payment,getBookings };
+      bookings: userBookings,
+    };
+    return hotelWithUserBookings;
+  });
+  return res.status(201).json(new ApiResponse(200, result, "hotel bookings"));
+});
+export { booking, payment, getBookings };

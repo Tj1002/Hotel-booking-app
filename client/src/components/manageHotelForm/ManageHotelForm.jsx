@@ -12,17 +12,22 @@ import HotelType from "./HotelTypes";
 import HotelFacilities from "./HotelFacilities";
 import HotelGuest from "./HotelGuest";
 import ImagesSection from "./HotelImages";
-import ButtonForm from "../Button/Button";
+
 import { useEffect } from "react";
 
 function ManageHotelForm({ hotel }) {
   const navigate = useNavigate();
   const methods = useForm();
-  const { handleSubmit, reset } = methods;
+  const {
+    handleSubmit,
+    reset,
+    register,
+    formState: { isLoading, errors },
+  } = methods;
   useEffect(() => {
     reset(hotel);
   }, [hotel, reset]);
-console.log(hotel?._id);
+  console.log(hotel?._id);
   const onSubmit = handleSubmit(async (data) => {
     const FileList = Array.from(data.imageFiles);
     const formData = new FormData();
@@ -41,34 +46,34 @@ console.log(hotel?._id);
     FileList.forEach((file) => {
       formData.append("imageFiles", file);
     });
-   
-  try {
-    let url = "/api/v1/my-hotels/register";
-    let method = "POST";
 
-    if (hotel) {
-      url = `/api/v1/my-hotels/updateHotel/${hotel._id}`; 
-      method = "PUT";
+    try {
+      let url = "/api/v1/my-hotels/register";
+      let method = "POST";
+
+      if (hotel) {
+        url = `/api/v1/my-hotels/updateHotel/${hotel._id}`;
+        method = "PUT";
+      }
+
+      const response = await fetch(url, {
+        method: method,
+        body: formData,
+      });
+
+      if (response.ok) {
+        const message = hotel
+          ? "Hotel updated successfully"
+          : "Hotel created successfully";
+        toast.success(message);
+        navigate("/");
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error);
+      }
+    } catch (error) {
+      toast.error("Error updating hotel");
     }
-
-    const response = await fetch(url, {
-      method: method,
-      body: formData,
-    });
-
-    if (response.ok) {
-      const message = hotel
-        ? "Hotel updated successfully"
-        : "Hotel created successfully";
-      toast.success(message);
-      navigate("/");
-    } else {
-      const errorData = await response.json();
-      toast.error(errorData.error);
-    }
-  } catch (error) {
-    toast.error("Error updating hotel");
-  }
   });
   return (
     <FormProvider {...methods}>
@@ -86,7 +91,15 @@ console.log(hotel?._id);
           <HotelFacilities />
           <HotelGuest />
           <ImagesSection />
-          <ButtonForm message={hotel ? "Update Hotel" : "Add Hotel"} />
+          <span className="flex justify-end">
+            <button
+              disabled={isLoading}
+              type="submit"
+              className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-xl disabled:bg-gray-500"
+            >
+              {isLoading ? "Saving..." : "Save"}
+            </button>
+          </span>
         </form>
       </div>
     </FormProvider>

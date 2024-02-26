@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 const MyHotels = () => {
   const [hotelsData, setHotelsData] = useState([]);
   const { currentUser } = useSelector((state) => state.user);
-  
 
   useEffect(() => {
     const getAllHotels = async () => {

@@ -4,13 +4,19 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Label, TextInput } from "flowbite-react";
-import { saveSearchValues } from "../../redux/features/searchSlice";
-import { useEffect } from "react";
+import {
+  updateAdultCount,
+  updateCheckIn,
+  updateCheckOut,
+  updateChildCount,
+  updateDestination,
+} from "../../redux/features/searchSlice";
 
 const GuestInfoForm = ({ pricePerNight, hotelId }) => {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const search = useSelector((state) => state.search);
+  console.log(search);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,10 +29,10 @@ const GuestInfoForm = ({ pricePerNight, hotelId }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      checkIn: search.checkIn,
-      checkOut: search.checkOut,
-      adultCount: search.adultCount,
-      childCount: search.childCount,
+      checkIn: search.checkIn || new Date(),
+      checkOut: search.checkOut || new Date(),
+      adultCount: search.adultCount || 1,
+      childCount: search.childCount || 0,
     },
   });
 
@@ -38,32 +44,23 @@ const GuestInfoForm = ({ pricePerNight, hotelId }) => {
   maxDate.setFullYear(maxDate.getFullYear() + 1);
 
   const onSignInClick = (data) => {
-    dispatch(
-      saveSearchValues(
-        "",
-        data.checkIn,
-        data.checkOut,
-        data.adultCount,
-        data.childCount
-      )
-    );
+    dispatch(updateDestination(""));
+    dispatch(updateCheckIn(data.checkIn));
+    dispatch(updateCheckOut(data.checkOut));
+    dispatch(updateChildCount(data.childCount));
+    dispatch(updateAdultCount(data.adultCount));
+
     navigate("/sign-in", { state: { from: location } });
   };
-  useEffect(() => {
-    console.log(search.saveSearchValues);
-  }, [search]);
 
   const onSubmit = (data) => {
-    dispatch(
-      saveSearchValues(
-        "",
-        data.checkIn,
-        data.checkOut,
-        data.adultCount,
-        data.childCount
-      )
-    );
-    // navigate(`/hotel/${hotelId}/booking`);
+    dispatch(updateDestination(""));
+    dispatch(updateCheckIn(data.checkIn));
+    dispatch(updateCheckOut(data.checkOut));
+    dispatch(updateChildCount(data.childCount));
+    dispatch(updateAdultCount(data.adultCount));
+
+    navigate(`/hotel/${hotelId}/booking`);
   };
 
   return (
@@ -95,7 +92,7 @@ const GuestInfoForm = ({ pricePerNight, hotelId }) => {
               required
               selected={checkOut}
               onChange={(date) => setValue("checkOut", date)}
-              selectsStart
+              selectsEnd
               startDate={checkIn}
               endDate={checkOut}
               minDate={minDate}
@@ -142,11 +139,17 @@ const GuestInfoForm = ({ pricePerNight, hotelId }) => {
             )}
           </div>
           {currentUser ? (
-            <button className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl"
+            >
               Book Now
             </button>
           ) : (
-            <button className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl"
+            >
               Sign in to Book
             </button>
           )}

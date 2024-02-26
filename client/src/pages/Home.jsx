@@ -10,9 +10,8 @@ function HotelDetails() {
       try {
         const response = await fetch(`/api/v1/hotels`);
         const result = await response.json();
-        const hotel = result.data;
-        console.log(hotel);
-        setHotels(hotel);
+        console.log(result);
+        setHotels(result);
       } catch (error) {
         console.log(error);
       }
@@ -23,7 +22,7 @@ function HotelDetails() {
   const bottomRowHotels = hotels?.slice(2) || [];
 
   return (
-    <div className="space-y-3">
+    <div className="mx-8 space-y-3">
       <h2 className="text-3xl font-bold">Latest Destinations</h2>
       <p>Most recent desinations added by our hosts</p>
       <div className="grid gap-4">
@@ -34,7 +33,7 @@ function HotelDetails() {
         </div>
         <div className="grid md:grid-cols-3 gap-4">
           {bottomRowHotels.map((hotel) => (
-            <LatestDestinationCard hotel={hotel} key={hotel._id}/>
+            <LatestDestinationCard hotel={hotel} key={hotel._id} />
           ))}
         </div>
       </div>
