@@ -1,14 +1,17 @@
 import { useForm } from "react-hook-form";
-import { Datepicker } from "flowbite-react";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Label, TextInput } from "flowbite-react";
+import { saveSearchValues } from "../../redux/features/searchSlice";
+import { useEffect } from "react";
 
+const GuestInfoForm = ({ pricePerNight, hotelId }) => {
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.user);
+  const search = useSelector((state) => state.search);
 
-const GuestInfoForm = () => {
-
-  const { isLoggedIn } = useAppContext();
-  const {currentUser}=useSelector(state=>state.user)
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,49 +22,56 @@ const GuestInfoForm = () => {
     setValue,
     formState: { errors },
   } = useForm({
-    // defaultValues: {
-    //   checkIn: search.checkIn,
-    //   checkOut: search.checkOut,
-    //   adultCount: search.adultCount,
-    //   childCount: search.childCount,
-    // },
+    defaultValues: {
+      checkIn: search.checkIn,
+      checkOut: search.checkOut,
+      adultCount: search.adultCount,
+      childCount: search.childCount,
+    },
   });
 
-  // const checkIn = watch("checkIn");
-  // const checkOut = watch("checkOut");
+  const checkIn = watch("checkIn");
+  const checkOut = watch("checkOut");
 
   const minDate = new Date();
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
 
-  const onSignInClick = (data: GuestInfoFormData) => {
-    search.saveSearchValues(
-      "",
-      data.checkIn,
-      data.checkOut,
-      data.adultCount,
-      data.childCount
+  const onSignInClick = (data) => {
+    dispatch(
+      saveSearchValues(
+        "",
+        data.checkIn,
+        data.checkOut,
+        data.adultCount,
+        data.childCount
+      )
     );
     navigate("/sign-in", { state: { from: location } });
   };
+  useEffect(() => {
+    console.log(search.saveSearchValues);
+  }, [search]);
 
   const onSubmit = (data) => {
-    search.saveSearchValues(
-      "",
-      data.checkIn,
-      data.checkOut,
-      data.adultCount,
-      data.childCount
+    dispatch(
+      saveSearchValues(
+        "",
+        data.checkIn,
+        data.checkOut,
+        data.adultCount,
+        data.childCount
+      )
     );
-    navigate(`/hotel/${hotelId}/booking`);
+    // navigate(`/hotel/${hotelId}/booking`);
   };
 
   return (
     <div className="flex flex-col p-4 bg-blue-200 gap-4">
-      <h3 className="text-md font-bold">£{pricePerNight}</h3>
+      <h3 className="text-md font-bold">${pricePerNight}</h3>
       <form
         onSubmit={
-          isLoggedIn ? handleSubmit(onSubmit) : handleSubmit(onSignInClick)
+          currentUser ? handleSubmit(onSubmit) : handleSubmit(onSignInClick)
         }
       >
         <div className="grid grid-cols-1 gap-4 items-center">
@@ -69,7 +79,7 @@ const GuestInfoForm = () => {
             <DatePicker
               required
               selected={checkIn}
-              onChange={(date) => setValue("checkIn", date as Date)}
+              onChange={(date) => setValue("checkIn", date)}
               selectsStart
               startDate={checkIn}
               endDate={checkOut}
@@ -84,7 +94,7 @@ const GuestInfoForm = () => {
             <DatePicker
               required
               selected={checkOut}
-              onChange={(date) => setValue("checkOut", date as Date)}
+              onChange={(date) => setValue("checkOut", date)}
               selectsStart
               startDate={checkIn}
               endDate={checkOut}
@@ -96,9 +106,9 @@ const GuestInfoForm = () => {
             />
           </div>
           <div className="flex bg-white px-2 py-1 gap-2">
-            <label className="items-center flex">
+            <Label className="items-center flex">
               Adults:
-              <input
+              <TextInput
                 className="w-full p-1 focus:outline-none font-bold"
                 type="number"
                 min={1}
@@ -112,10 +122,10 @@ const GuestInfoForm = () => {
                   valueAsNumber: true,
                 })}
               />
-            </label>
-            <label className="items-center flex">
+            </Label>
+            <Label className="items-center flex">
               Children:
-              <input
+              <TextInput
                 className="w-full p-1 focus:outline-none font-bold"
                 type="number"
                 min={0}
@@ -124,14 +134,14 @@ const GuestInfoForm = () => {
                   valueAsNumber: true,
                 })}
               />
-            </label>
+            </Label>
             {errors.adultCount && (
               <span className="text-red-500 font-semibold text-sm">
                 {errors.adultCount.message}
               </span>
             )}
           </div>
-          {isLoggedIn ? (
+          {currentUser ? (
             <button className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl">
               Book Now
             </button>
