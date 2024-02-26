@@ -72,6 +72,7 @@ const registerHotel = asyncHandler(async (req, res) => {
     imageUrls: imageUrl && imageUrl.map((imUrl) => imUrl.url),
     lastUpdated: new Date(),
   });
+  console.log(hotel);
 
   if (!hotel) {
     throw new ApiError(500, "Something went wrong while registering the hotel");
@@ -104,7 +105,6 @@ const getAllHotelsByUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, hotels, "fetching all hotels Successfully"));
 });
 const getSingleHotel = asyncHandler(async (req, res) => {
-
   const hotel = await Hotel.findById({ _id: req.params.id });
   if (!hotel) {
     throw new ApiError(400, "No hotels found");
