@@ -5,9 +5,8 @@ import morgan from "morgan";
 import path from "path";
 
 const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, "/client/dist")));
-
 const app = express();
+
 app.use(morgan("tiny"));
 app.use(
   cors({
@@ -18,9 +17,9 @@ app.use(
 
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
-
 app.use(cookieParser());
-//importing router
+
+//importing routers
 import userRouter from "./routes/user.routes.js";
 import myHotelRouter from "./routes/my-hotel.routes.js";
 import hotelRouter from "./routes/hotel.routes.js";
